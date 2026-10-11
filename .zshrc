@@ -1,18 +1,9 @@
+typeset -U path fpath
+
 autoload bashcompinit && bashcompinit
 
-export PATH="/usr/local/bin:/usr/local/sbin:~/bin:$PATH"
+export PATH="$HOME/bin:/usr/local/bin:/usr/local/sbin:$PATH"
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$(brew --prefix)/opt/nvm/nvm.sh" ] && . "$(brew --prefix)/opt/nvm/nvm.sh"
-
-eval "$(pyenv init -)"
-if which pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi
-
-if type brew &>/dev/null; then
-    FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
-    autoload -Uz compinit
-    compinit
-fi
 
 # ------------------------
 # OhMyZSH Config Below
@@ -99,8 +90,6 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Add wisely, as too many plugins slow down shell startup.
 
 plugins=(
-	brew
-	command-not-found
 	git
 	ls
 	docker
@@ -108,15 +97,17 @@ plugins=(
 	history
 	iterm2
 	macos
-	nvm
-	pyenv
 	marktext
 	zsh-interactive-cd
 	zsh-autosuggestions
 	zsh-syntax-highlighting
 )
 
-source $ZSH/oh-my-zsh.sh
+# Complete mise tools, commands, and tasks using the installed script.
+fpath=("$HOME/.local/share/zsh/site-functions" $fpath)
+# Mise maintenance updates Oh My Zsh and its plugin repositories.
+zstyle ':omz:update' mode disabled
+source "$ZSH/oh-my-zsh.sh"
 
 # User configuration
 
@@ -143,17 +134,24 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-source /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-if type brew &>/dev/null; then
-    FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
-    autoload -Uz compinit
-    compinit
-fi
 
 export ZSH_LS_BACKEND="eza"
+
+export PATH="$HOME/.local/bin:$PATH"
+
+
+# Added by Devin
+export PATH="$HOME/.codeium/windsurf/bin:$PATH"
+
+# Manage development tool versions with mise.
+eval "$("$HOME/.local/bin/mise" activate zsh)"
+
+# Edit the checked-out dotfiles and keep local secrets outside the repository.
+alias dotfiles='git -C "$HOME/.local/share/dotfiles"'
+[[ ! -f "$HOME/.config/zsh/local.zsh" ]] || source "$HOME/.config/zsh/local.zsh"
