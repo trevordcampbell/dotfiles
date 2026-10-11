@@ -1,5 +1,5 @@
 [settings]
-# Native Git uses shallow clones for branch-based font casks.
+# Native Git uses shallow clones for managed branch checkouts.
 gix = false
 libgit2 = false
 idiomatic_version_file_enable_tools = ["node", "python", "rust", "pnpm"]
@@ -17,9 +17,9 @@ bun = "latest"
 rust = { version = "latest", postinstall = '"$HOME/.cargo/bin/rustup" default "${MISE_TOOL_INSTALL_PATH##*/}"' }
 pnpm = "latest"
 gh = "latest"
-# Repair invalid ad-hoc signatures in verified Supabase release artifacts on macOS.
 "cargo:zpl_toolchain_cli" = "latest"
 "github:skw398/scap" = { version = "latest", asset_pattern = "scap.zip" }
+# Repair invalid ad-hoc signatures in verified Supabase release artifacts on macOS.
 supabase = { version = "latest", postinstall = "if [ \"$(uname -s)\" = Darwin ]; then for binary in \"$MISE_TOOL_INSTALL_PATH/supabase\" \"$MISE_TOOL_INSTALL_PATH/supabase-go\"; do if [ -f \"$binary\" ] && ! /usr/bin/codesign --verify --strict \"$binary\" 2>/dev/null; then /usr/bin/codesign --force --sign - \"$binary\"; fi; done; fi" }
 
 [bootstrap.packages]
@@ -59,10 +59,7 @@ supabase = { version = "latest", postinstall = "if [ \"$(uname -s)\" = Darwin ];
 "brew-cask:spotify" = { version = "latest", adopt = true }
 "brew-cask:ledger-wallet" = { version = "latest", adopt = true }
 "brew-cask:chatgpt" = { version = "latest", adopt = true }
-"brew-cask:font-open-sans" = { version = "latest", adopt = true }
 "brew-cask:font-poppins" = { version = "latest", adopt = true }
-"brew-cask:font-rubik" = { version = "latest", adopt = true }
-"brew-cask:font-space-grotesk" = { version = "latest", adopt = true }
 
 [bootstrap.services.mise-tool-update]
 builtin = "tool-update"
@@ -115,6 +112,7 @@ run = '"$HOME/.local/bin/mise" -C "$HOME" exec -- python "$HOME/.config/mise/scr
 
 # Live shell files are links into the public dotfiles checkout.
 [dotfiles]
+"~/Library/Fonts/*.ttf" = { source = "~/.local/share/mise/font-sources/fonts/*.ttf", mode = "copy", permissions = "0644" }
 "~/.zshrc" = { source = "~/.local/share/dotfiles/.zshrc", mode = "symlink" }
 "~/.zprofile" = { source = "~/.local/share/dotfiles/.zprofile", mode = "symlink" }
 "~/.p10k.zsh" = { source = "~/.local/share/dotfiles/.p10k.zsh", mode = "symlink" }
@@ -139,3 +137,21 @@ run = ["mise bootstrap repos update --skip-dirty -y", "mise run shell:completion
 description = "Generate completion for the installed mise version"
 dir = "~"
 run = 'mkdir -p "$HOME/.local/share/zsh/site-functions" && "$HOME/.local/bin/mise" completion zsh > "$HOME/.local/share/zsh/site-functions/_mise"'
+
+[bootstrap.hooks]
+pre-dotfiles = '"$HOME/.local/bin/mise" -C "$HOME" run fonts:sync'
+
+[tasks."fonts:sync"]
+description = "Stage complete official Google variable font families"
+dir = "~"
+run = '"$HOME/.local/bin/mise" -C "$HOME" exec -- python "$HOME/.local/share/dotfiles/mise/scripts/google-fonts.py"'
+
+[tasks."fonts:check"]
+description = "Preview official variable font updates"
+dir = "~"
+run = '"$HOME/.local/bin/mise" -C "$HOME" exec -- python "$HOME/.local/share/dotfiles/mise/scripts/google-fonts.py" --check'
+
+[tasks."fonts:update"]
+description = "Update and deploy official Google variable fonts"
+dir = "~"
+run = '"$HOME/.local/bin/mise" -C "$HOME" exec -- python "$HOME/.local/share/dotfiles/mise/scripts/google-fonts.py" --deploy'

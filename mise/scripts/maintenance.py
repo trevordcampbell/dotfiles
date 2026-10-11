@@ -205,6 +205,7 @@ def main():
             step('shell-repositories', lambda: run([MISE, 'bootstrap', 'repos', 'update', '--skip-dirty', '-y'] + (['--dry-run'] if args.check else []), log, timeout=600))
             if not args.check:
                 step('shell-completions', lambda: run([MISE, 'run', 'shell:completions'], log, timeout=120))
+            step('variable-fonts', lambda: run([MISE, 'run', 'fonts:check' if args.check else 'fonts:update'], log, timeout=300))
             step('marktext', lambda: marktext(args.check, log))
             packages = tomllib.loads(CONFIG.read_text())['bootstrap']['packages']
             for key in packages:
