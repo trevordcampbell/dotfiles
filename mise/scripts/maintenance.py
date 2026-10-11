@@ -202,6 +202,8 @@ def main():
             if not args.check:
                 step('mise', lambda: run([MISE, 'self-update', '-y', '--no-plugins'], log, timeout=600))
             step('tools', lambda: run([MISE, 'upgrade', '--global', '-y'] + (['--dry-run'] if args.check else []), log))
+            if 'rust' in tomllib.loads(CONFIG.read_text()).get('tools', {}):
+                step('rustup', lambda: run([HOME / '.cargo/bin/rustup', 'check'] if args.check else [HOME / '.cargo/bin/rustup', 'self', 'update'], log, timeout=600))
             step('shell-repositories', lambda: run([MISE, 'bootstrap', 'repos', 'update', '--skip-dirty', '-y'] + (['--dry-run'] if args.check else []), log, timeout=600))
             if not args.check:
                 step('shell-completions', lambda: run([MISE, 'run', 'shell:completions'], log, timeout=120))

@@ -23,7 +23,7 @@ The root `mise.toml` only links the global config. The complete machine setup is
 
 ## Updates and local edits
 
-The existing daily maintenance LaunchAgent runs at 03:00 and at load. It updates mise, global tools, host packages, idle desktop apps, and clean shell repositories. Running apps are deferred. Tool and MarkText releases observe the configured 24-hour minimum age. Oh My Zsh's separate updater is disabled so mise schedules its updates. Repository updates only fast-forward and skip dirty checkouts.
+The existing daily maintenance LaunchAgent runs at 03:00 and at load. It updates mise, global tools, rustup, host packages, idle desktop apps, and clean shell repositories. Running apps are deferred. Mise, tool, and MarkText releases observe the configured 24-hour minimum age. Rustup uses its official stable self-updater. Oh My Zsh's separate updater is disabled so mise schedules its updates. Repository updates only fast-forward and skip dirty checkouts.
 
 ```sh
 mise run maintenance:check

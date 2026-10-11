@@ -31,7 +31,6 @@ supabase = { version = "latest", postinstall = "if [ \"$(uname -s)\" = Darwin ];
 "brew:fzf" = "latest"
 "brew:git" = "latest"
 "brew:gzip" = "latest"
-"brew:powerlevel10k" = "latest"
 "brew:tree" = "latest"
 "brew:wget" = "latest"
 
